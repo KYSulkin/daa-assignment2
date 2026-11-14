@@ -1,39 +1,68 @@
 public class IntStackQueue implements IntQueue{
-    // use two stacks as back-end
+    private IntArrayStack in;
+    private IntArrayStack out;
 
     public IntStackQueue() {
-        // creates an empty stack
+        in = new IntArrayStack();
+        out = new IntArrayStack();
     }
 
     @Override
     public void enqueue(int value) {
-
+        in.push(value);
     }
 
     @Override
     public int dequeue() {
-        return 0;
+        if (out.isEmpty()) {
+            while (!in.isEmpty()) out.push(in.pop());
+        }
+        if (out.isEmpty()) throw new RuntimeException("Queue is empty");
+        return out.pop();
     }
 
     @Override
     public int peek() {
-        return 0;
+        if (out.isEmpty()) {
+            while (!in.isEmpty()) out.push(in.pop());
+        }
+        if (out.isEmpty()) throw new RuntimeException("Queue is empty");
+        return out.peek();
     }
 
     @Override
     public int size() {
-        return 0;
+        return in.size() + out.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return in.isEmpty() && out.isEmpty();
     }
 
     @Override
     public String toString() {
-        // "[]" for empty queue
-        // "[7, 8, 6]" for queue containing elements: 7, 8, 6. (head-first)
-        return super.toString();
+        StringBuilder sb = new StringBuilder("[");
+        boolean first = true;
+        IntArrayStack temp = new IntArrayStack();
+
+        while (!out.isEmpty()) {
+            int v = out.pop();
+            if (!first) sb.append(", ");
+            sb.append(v);
+            first = false;
+            temp.push(v);
+        }
+        while (!temp.isEmpty()) out.push(temp.pop());
+
+        while (!in.isEmpty()) temp.push(in.pop());
+        while (!temp.isEmpty()) {
+            int v = temp.pop();
+            if (!first) sb.append(", ");
+            sb.append(v);
+            first = false;
+            in.push(v);
+        }
+        return sb.append("]").toString();
     }
 }
