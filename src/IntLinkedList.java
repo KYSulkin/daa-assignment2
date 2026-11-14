@@ -3,7 +3,6 @@ public class IntLinkedList {
     Node tail;
     int size;
 
-    // internal class that represents a list node.
     static class Node {
         int value;
         Node next;
@@ -28,46 +27,105 @@ public class IntLinkedList {
     }
 
     public IntLinkedList(){
-        // creates an empty list
+        head = null;
+        tail = null;
+        size = 0;
     }
 
     public void add(int value){
-        // adds a value at the end
+        Node node = new Node(value, tail, null);
+        if (tail == null) head = node;
+        else tail.next = node;
+        tail = node;
+        size++;
     }
 
     public void add(int index, int value){
-        // adds a value at index
+        if (index < 0 || index > size) throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        if (index == size) {
+            add(value);
+            return;
+        }
+        if (index == 0) {
+            Node node = new Node(value, null, head);
+            head.prev = node;
+            head = node;
+            size++;
+            return;
+        }
+        Node cur;
+        if (index < size / 2) {
+            cur = head;
+            for (int i = 0; i < index; i++) cur = cur.next;
+        } else {
+            cur = tail;
+            for (int i = size - 1; i > index; i--) cur = cur.prev;
+        }
+        Node node = new Node(value, cur.prev, cur);
+        cur.prev.next = node;
+        cur.prev = node;
+        size++;
     }
 
     public int get(int index){
-        // returns a value at index
-        return 0;
+        if (index < 0 || index >= size) throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        Node cur;
+        if (index < size / 2) {
+            cur = head;
+            for (int i = 0; i < index; i++) cur = cur.next;
+        } else {
+            cur = tail;
+            for (int i = size - 1; i > index; i--) cur = cur.prev;
+        }
+        return cur.value;
     }
 
     public void set(int index, int value){
-        // updates a value at index
+        if (index < 0 || index >= size) throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        Node cur;
+        if (index < size / 2) {
+            cur = head;
+            for (int i = 0; i < index; i++) cur = cur.next;
+        } else {
+            cur = tail;
+            for (int i = size - 1; i > index; i--) cur = cur.prev;
+        }
+        cur.value = value;
     }
 
     public int remove(int index){
-        // removes and returns value at index
-        return 0;
+        if (index < 0 || index >= size) throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        Node cur;
+        if (index < size / 2) {
+            cur = head;
+            for (int i = 0; i < index; i++) cur = cur.next;
+        } else {
+            cur = tail;
+            for (int i = size - 1; i > index; i--) cur = cur.prev;
+        }
+        if (cur.prev == null) head = cur.next;
+        else cur.prev.next = cur.next;
+        if (cur.next == null) tail = cur.prev;
+        else cur.next.prev = cur.prev;
+        size--;
+        return cur.value;
     }
 
     public int size(){
-        // returns size of list
-        return 0;
+        return size;
     }
 
     public boolean isEmpty(){
-        // returns whether list is empty
-        return false;
+        return size == 0;
     }
 
     @Override
     public String toString() {
-        // returns String representation of list
-        // "[]" for empty list
-        // "[7, 8, 6]" for non-empty list
-        return super.toString();
+        StringBuilder sb = new StringBuilder("[");
+        for (Node cur = head; cur != null; cur = cur.next) {
+            sb.append(cur.value);
+            if (cur.next != null) sb.append(", ");
+        }
+        return sb.append("]").toString();
     }
 }
